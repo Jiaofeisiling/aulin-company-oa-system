@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>报销管理</title>
+		<link rel="stylesheet" type="text/css" href="skin/css/base.css">
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				
+				var pageNum =1;
+				var pageSize =5;
+				
+				
+				search(pageNum,pageSize,0);
+				
+				$("#chooseAll").click(function(){
+					$("input[name='id']").prop("checked",true);
+				})
+				
+				$("#changeAll").click(function(){
+					$(":checkbox").each(function(){
+						$(this).prop("checked", !$(this).prop("checked"));
+					})
+				})
+				
+				$("#pageUp").click(function(){
+					
+					pageNum--;
+					if(pageNum<=0){
+						pageNum=1;
+					}
+					search(pageNum,pageSize);
+				})
+				
+				$("#pageDown").click(function(){
+					
+					pageNum++;
+					search(pageNum,pageSize);
+				})
+				
+				// var status = null;
+				
+				$("#showAll").click(function(){
+					search(1,5,0)
+				})
+				$("#unpass").click(function(){
+					search(1,5,1)
+				})
+				$("#pass").click(function(){
+					search(1,5,2)
+				})
+				
+			
+			})
+			
+			function search(pageNum,pageSize,status){
+				
+				$.ajax({
+					url:"./bx/findAll",
+					type:"get",
+					data:{"status":status,"pageNum":pageNum,"pageSize":pageSize},
+					dataType:"json",
+					success:function(data){
+						$("tr").remove(".data");
+						if(data.status){
+							$.each(data.list,function(i,baoxiao){
+								$("#chooseBtn").before('<tr class="data" align=\'center\' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor=\'#FCFDEE\';" onMouseOut="javascript:this.bgColor=\'#FFFFFF\';" height="22">'
+									+'<td><input name="id" type="checkbox" id="id" value="'+baoxiao.bxid+'" class="np"></td>'
+									+'<td>'+(i+1)+'</td>'
+									+'<td>'+baoxiao.expendituretype.etname+'</td>'
+									+'<td>'+baoxiao.employee.ename+'</td>'
+									+'<td>'+baoxiao.totalmoney+'</td>'
+									+'<td align="center"><u>'+dateTurn(baoxiao.bxtime)+'</u></td>'
+									+'<td>'+baoxiao.bxremark+'</td>'
+									+'<td>'+turnStatus(baoxiao.bxstatus)+'</td>'
+									+'<td><a href="baoxiao-task-edit.html?id='+baoxiao.bxid+'">审批</a></td></tr>');
+							});
+						}
+					}
+				})
+			}
+			
+			function turnStatus(status){
+				if(status==0){
+					return "未审批";
+				}else if(status==1){
+					return "同意";
+				}else if(status==2){
+					return "驳回"
+				}
+			}
+			
+			function dateTurn(l){
+				if(l==null){
+					return "";
+				}else{
+					return l;
+				}
+			}
+		</script>
+	</head>
+	<body leftmargin="8" topmargin="8" background='skin/images/allbg.gif'>
+
+		<!--  快速转换位置按钮  -->
+		<table width="98%" border="0" cellpadding="0" cellspacing="1" bgcolor="#D1DDAA" align="center">
+			<tr>
+				<td height="26" background="skin/images/newlinebg3.gif">
+					<table width="58%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>
+								当前位置:报销管理>>报销列表
+							</td>
+
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+
+		<!--  内容列表   -->
+		<form name="form2">
+
+			<table width="98%" cellpadding="2" cellspacing="1" bgcolor="#D1DDAA" align="center" style="margin-top:8px">
+				<tr bgcolor="#E7E7E7">
+					<td height="24" colspan="12" background="skin/images/tbg.gif">&nbsp;报销单列表&nbsp;</td>
+				</tr>
+				<tr align="center" bgcolor="#FAFAF1" height="22">
+					<td width="4%">选择</td>
+					<td width="10%">编号</td>
+					<td width="10%">类型</td>
+					<td width="10%">报销人</td>
+					<td width="6%">总金额</td>
+					<td width="10%">使用时间</td>
+					<td width="30%">备注信息</td>
+					<td width="10%">审批状态</td>
+					<td width="10%">操作</td>
+				</tr>
+
+
+				<!-- <tr align='center' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+				 height="22">
+					<td><input name="id" type="checkbox" id="id" value="101" class="np"></td>
+					<td>111</td>
+					<td>111</td>
+					<td>111</td>
+					<td>111</td>
+					<td align="center"><a href=''><u>2019-09-09</u></a></td>
+					<td>22222</td>
+					<td>财务未审批</td>
+					<td><a href="baoxiao-task-edit.html">审批</a></td>
+				</tr> -->
+				
+
+				<tr id="chooseBtn" bgcolor="#FAFAF1">
+					<td height="28" colspan="12">
+						<a href="javascript:void" id="showAll" class="coolbg">&nbsp;全部&nbsp;</a>
+						<a href="javascript:void" id="unpass" class="coolbg">&nbsp;未审批的报销&nbsp;</a>
+						<a href="javascript:void" id="pass" class="coolbg">&nbsp;已审批的报销&nbsp;</a>
+						
+						<a href="javascript:void(0)" id="pageDown" style="float: right;" class="coolbg">&nbsp;下一页&nbsp;</a>
+						<a href="javascript:void(0)" id="pageUp" style="float: right;" class="coolbg">&nbsp;上一页&nbsp;</a>
+					</td>
+				</tr>
+
+				<tr align="right" bgcolor="#EEF4EA">
+					<td height="36" colspan="12" align="center">
+						<!--翻页代码 -->
+					</td>
+				</tr>
+			</table>
+
+		</form>
+
+
+	</body>
+</html>

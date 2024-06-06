@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>查看任务</title>
+		<link rel="stylesheet" type="text/css" href="skin/css/base.css">
+		<script type="application/javascript" src="js/jquery.min.js"></script>
+		<script src="js/utils.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+		
+			
+		
+			$(function(){
+							
+				var str = window.location.search;
+				var id = str.substring(str.lastIndexOf("id")+"id".length+1,str.length);
+				// alert(id)
+				
+				$.ajax({
+					url:"./task/findById/"+id,
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						// alert(data)
+						// console.log(data)
+						if(data.status){
+							$("#pro").text(data.t.func.module.analysis.project.pname+"-"+data.t.func.module.analysis.title+"-"+data.t.func.module.modname+"-"+data.t.func.functionname);
+							$("#tasktitle").text(data.t.tasktitle);
+							$("#starttime").text(data.t.starttime);
+							$("#endtime").text(data.t.endtime);
+							$("#exec").text(data.t.executor.ename);
+							$("#leader").text(data.t.leader.ename);
+							$("#status").text(turnStatus(data.t.status));
+							$("#level").text(data.t.level);
+							$("#remark").text(data.t.remark);
+						}
+					}
+					
+				})
+				
+			})
+			
+			function turnStatus(obj){
+				if(status==0){
+					return "未开始";
+				}else if(status==1){
+					return "进行中";
+				}else if(status==2){
+					return "已完成"
+				}
+			}
+
+		</script>
+	</head>
+	<body leftmargin="8" topmargin="8" background='skin/images/allbg.gif'>
+
+		<!--  快速转换位置按钮  -->
+		<table width="98%" border="0" cellpadding="0" cellspacing="1" bgcolor="#D1DDAA" align="center">
+			<tr>
+				<td height="26" background="skin/images/newlinebg3.gif">
+					<table width="58%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>
+								当前位置:任务管理>>查看任务
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+		<form name="form2">
+
+			<table width="98%" border="0" cellpadding="2" cellspacing="1" bgcolor="#D1DDAA" align="center" style="margin-top:8px">
+				<tr bgcolor="#E7E7E7">
+					<td height="24" colspan="2" background="skin/images/tbg.gif">&nbsp;查看任务&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">参考位置：</td>
+					<td id="pro" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">任务标题：</td>
+					<td id="tasktitle" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">开始时间：</td>
+					<td id="starttime" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">结束时间：</td>
+					<td id="endtime" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">执行者：</td>
+					<td id="exec" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">发布人：</td>
+					<td id="leader" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">状态：</td>
+					<td id="status" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+				<tr>
+					<td align="right" bgcolor="#FAFAF1" height="22">优先级：</td>
+					<td id="level" align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+					 height="22"></td>
+				</tr>
+
+				<tr>
+					<td align="right" bgcolor="#FAFAF1">详细说明：</td>
+					<td id="remark" colspan=3 align='left' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';">
+						
+					</td>
+				</tr>
+
+
+				<tr bgcolor="#FAFAF1">
+					<td height="28" colspan=4 align=center>
+						&nbsp;
+						<a href="task.html" class="coolbg">返回</a>
+					</td>
+				</tr>
+			</table>
+
+		</form>
+
+
+	</body>
+</html>

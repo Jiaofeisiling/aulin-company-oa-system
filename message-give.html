@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>收件箱</title>
+		<link rel="stylesheet" type="text/css" href="skin/css/base.css">
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+			window.pages;
+			
+			$(function(){
+				
+				var pageNum =1;
+				var pageSize =5;
+				
+				search(pageNum,pageSize);
+				
+				$("#chooseAll").click(function(){
+					$("input[name='id']").prop("checked",true);
+				})
+				
+				$("#changeAll").click(function(){
+					$(":checkbox").each(function(){
+						$(this).prop("checked", !$(this).prop("checked"));
+					})
+				})
+				
+				$("#pageUp").click(function(){
+					
+					pageNum--;
+					if(pageNum<=0){
+						pageNum=1;
+					}
+					search(pageNum,pageSize);
+				})
+				
+				$("#pageDown").click(function(){
+					
+					pageNum++;
+					if(pageNum>=pages){
+						pageNum=pages;
+					}
+					search(pageNum,pageSize);
+				})
+				
+				$("#delete").click(function(){
+					var array = new Array();
+					$("input[type='checkbox']:checked").each(function(i){
+						array[i]=$(this).val()
+					})
+					console.log(array)
+					if(array.length==0){
+						alert("请选择您要删除的数据")
+						return false;
+					}
+					$.ajax({
+						url:"./pro/deleteByIds",
+						type:"post",
+						traditional:true,
+						data:{ids:array},
+						dataType:'json',
+						success:function(data){
+							if(data.status){
+								location.reload();
+							}else{
+								alert(data.msg);
+							}
+						}
+					})
+				})
+				
+			
+			})
+			
+			function search(pageNum,pageSize,pages){
+			
+				$.ajax({
+					url:"./msg/findAll",
+					type:"get",
+					data:{"pageNum":pageNum,"pageSize":pageSize},
+					dataType:"json",
+					success:function(data){
+						window.pages = data.pageInfo.pages;
+						$("tr").remove(".data");
+						if(data.status){
+							$.each(data.pageInfo.list,function(i,msg){
+								$("#chooseBtn").before('<tr class="data" align=\'center\' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor=\'#FCFDEE\';" onMouseOut="javascript:this.bgColor=\'#FFFFFF\';" height="22">'
+									+'<td><input name="id" type="checkbox" id="id" value="'+msg.msgid+'" class="np"></td>'
+									+'<td>'+(i+1)+'</td>'
+									+'<td align="center"><span>'+msg.msgcontent+'</span></td>'
+									+'<td>'+msg.receiver.ename+'</td>'
+									+'<td>'+msg.msgtime+'</td>'
+									+'<td>'+ turnMark(msg.mark)+'</td>'
+									+'<td><a>删除</a></td></tr>');
+							});
+						}
+					}
+				})
+			}
+			
+			function turnMark(obj){
+				if(obj==0){
+					return "未发送";
+				}else if(obj==1){
+					return "已发送";
+				}
+			}
+			
+		</script>
+	</head>
+	<body leftmargin="8" topmargin="8" background='skin/images/allbg.gif'>
+
+		<!--  快速转换位置按钮  -->
+		<table width="98%" border="0" cellpadding="0" cellspacing="1" bgcolor="#D1DDAA" align="center">
+			<tr>
+				<td height="26" background="skin/images/newlinebg3.gif">
+					<table width="58%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>
+								当前位置:消息推送>>展示消息
+							</td>
+							<td>
+								<input type='button' class="coolbg np" onClick="location='message-seed.html';" value='添加消息'/>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+
+		<!--  内容列表   -->
+		<form name="form2">
+
+			<table width="98%" border="0" cellpadding="2" cellspacing="1" bgcolor="#D1DDAA" align="center" style="margin-top:8px">
+				<tr bgcolor="#E7E7E7">
+					<td height="24" colspan="12" background="skin/images/tbg.gif">&nbsp;消息列表&nbsp;</td>
+				</tr>
+				<tr align="center" bgcolor="#FAFAF1" height="22">
+					<td width="4%">选择</td>
+					<td width="6%">序号</td>
+					<td width="10%">内容</td>
+					<td width="10%">收件人</td>
+					<td width="8%">收件时间</td>
+					<td width="8%">状态</td>
+					<td width="8%">操作</td>
+				</tr>
+
+				<!-- <tr align='center' bgcolor="#FFFFFF" onMouseMove="javascript:this.bgColor='#FCFDEE';" onMouseOut="javascript:this.bgColor='#FFFFFF';"
+				 height="22">
+					<td><input name="id" type="checkbox" id="id" value="101" class="np"></td>
+					<td>1</td>
+					<td align="center"><span>最近工作累不？项目完成的咋样?加油哈</span></td>
+					<td>张三</td>
+					<td>2015-02-03</td>
+					<td><a>删除</a></td>
+				</tr> -->
+
+
+				<tr id="chooseBtn" bgcolor="#FAFAF1">
+					<td height="28" colspan="12">
+						&nbsp;
+						<a href="javascript:void(0)" id="chooseAll" class="coolbg">全选</a>
+						<a href="javascript:void(0)" id="changeAll" class="coolbg">反选</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<a href="javascript:void(0)" id="delete" class="coolbg">&nbsp;删除&nbsp;</a>
+						
+						<a href="javascript:void(0)" id="pageDown" style="float: right;" class="coolbg">&nbsp;下一页&nbsp;</a>
+						<a href="javascript:void(0)" id="pageUp" style="float: right;" class="coolbg">&nbsp;上一页&nbsp;</a>
+
+					</td>
+				</tr>
+				<tr align="right" bgcolor="#EEF4EA">
+					<td height="36" colspan="12" align="center">
+						<!--翻页代码 -->
+					</td>
+				</tr>
+			</table>
+
+		</form>
+
+
+	</body>
+</html>
